@@ -14,7 +14,9 @@ A real conversation cannot happen without knowing what to respond to someone. Bo
 
 -----------
 
-# An example conversation
+# An example conversation: "It's My Stuff, Ask me about it"
+
+Ask the bot a question about a personal belonging such as 'What color is your hair?' or 'What size is your Yorkie?'
 
 `... setup bot states, bot transitions, etc ...`
 
@@ -40,7 +42,7 @@ User is now asking the bot about the color of it's cat. However, the context of 
 
 `string responseWhatColor = stateManager.QueryState("What color?");`
 
-User is now asking what color. However, the bot is confused and no longer know we're talking about the Yorkie because you interrupted the context. Ask a question about the dog or some other belonging!
+User is now asking what color. However, the bot is confused and no longer knows that we are talking about the Yorkie because the conversation context was changed randomly. Ask a question about the dog or some other belonging!
 
 -----------
 
