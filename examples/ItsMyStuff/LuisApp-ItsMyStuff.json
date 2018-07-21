@@ -1,0 +1,289 @@
+{
+  "luis_schema_version": "3.0.0",
+  "versionId": "0.1",
+  "name": "ItsMyStuff",
+  "desc": "Its My Stuff, BotStateManager",
+  "culture": "en-us",
+  "intents": [
+    {
+      "name": "AskAboutItem"
+    },
+    {
+      "name": "None"
+    }
+  ],
+  "entities": [
+    {
+      "name": "MyItems",
+      "children": [
+        "Color",
+        "Item",
+        "Size"
+      ],
+      "roles": []
+    }
+  ],
+  "composites": [],
+  "closedLists": [
+    {
+      "name": "Items",
+      "subLists": [
+        {
+          "canonicalForm": "item",
+          "list": [
+            "item"
+          ]
+        },
+        {
+          "canonicalForm": "thing",
+          "list": []
+        },
+        {
+          "canonicalForm": "object",
+          "list": []
+        },
+        {
+          "canonicalForm": "noun",
+          "list": []
+        }
+      ],
+      "roles": []
+    },
+    {
+      "name": "Ownership",
+      "subLists": [
+        {
+          "canonicalForm": "own",
+          "list": []
+        },
+        {
+          "canonicalForm": "have",
+          "list": []
+        },
+        {
+          "canonicalForm": "belong",
+          "list": []
+        },
+        {
+          "canonicalForm": "obtain",
+          "list": []
+        },
+        {
+          "canonicalForm": "get",
+          "list": []
+        },
+        {
+          "canonicalForm": "receive",
+          "list": []
+        }
+      ],
+      "roles": []
+    },
+    {
+      "name": "Time",
+      "subLists": [
+        {
+          "canonicalForm": "when",
+          "list": []
+        },
+        {
+          "canonicalForm": "how long",
+          "list": []
+        }
+      ],
+      "roles": []
+    }
+  ],
+  "patternAnyEntities": [],
+  "regex_entities": [],
+  "prebuiltEntities": [
+    {
+      "name": "keyPhrase",
+      "roles": []
+    }
+  ],
+  "model_features": [],
+  "regex_features": [],
+  "patterns": [
+    {
+      "pattern": "what {MyItems} is your {MyItems::Item}'s {MyItems::Item}",
+      "intent": "AskAboutItem"
+    },
+    {
+      "pattern": "you {Ownership} {MyItems::Item}",
+      "intent": "AskAboutItem"
+    },
+    {
+      "pattern": "you {Ownership} a {MyItems::Item}",
+      "intent": "AskAboutItem"
+    },
+    {
+      "pattern": "you have any {MyItems::Item}",
+      "intent": "AskAboutItem"
+    },
+    {
+      "pattern": "do you have {MyItems::Item}",
+      "intent": "AskAboutItem"
+    },
+    {
+      "pattern": "you have {MyItems::Item}",
+      "intent": "AskAboutItem"
+    },
+    {
+      "pattern": "you got {MyItems::Item} ?",
+      "intent": "AskAboutItem"
+    }
+  ],
+  "utterances": [
+    {
+      "text": "what color is it",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Color",
+          "startPos": 5,
+          "endPos": 9
+        },
+        {
+          "entity": "MyItems::Item",
+          "startPos": 14,
+          "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "what color is your item",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Color",
+          "startPos": 5,
+          "endPos": 9
+        },
+        {
+          "entity": "MyItems::Item",
+          "startPos": 19,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "what size is it",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Size",
+          "startPos": 5,
+          "endPos": 8
+        },
+        {
+          "entity": "MyItems::Item",
+          "startPos": 13,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "what size is your item",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Size",
+          "startPos": 5,
+          "endPos": 8
+        },
+        {
+          "entity": "MyItems::Item",
+          "startPos": 18,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "what x is your y z",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Size",
+          "startPos": 5,
+          "endPos": 5
+        },
+        {
+          "entity": "MyItems::Item",
+          "startPos": 15,
+          "endPos": 15
+        },
+        {
+          "entity": "MyItems::Item",
+          "startPos": 17,
+          "endPos": 17
+        }
+      ]
+    },
+    {
+      "text": "you have items",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Item",
+          "startPos": 9,
+          "endPos": 13
+        }
+      ]
+    },
+    {
+      "text": "you own a product",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Item",
+          "startPos": 10,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "you own product",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Item",
+          "startPos": 8,
+          "endPos": 14
+        }
+      ]
+    },
+    {
+      "text": "your item is what color",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Item",
+          "startPos": 5,
+          "endPos": 8
+        },
+        {
+          "entity": "MyItems::Color",
+          "startPos": 18,
+          "endPos": 22
+        }
+      ]
+    },
+    {
+      "text": "your item is what size",
+      "intent": "AskAboutItem",
+      "entities": [
+        {
+          "entity": "MyItems::Item",
+          "startPos": 5,
+          "endPos": 8
+        },
+        {
+          "entity": "MyItems::Size",
+          "startPos": 18,
+          "endPos": 21
+        }
+      ]
+    }
+  ]
+}
