@@ -1,11 +1,13 @@
 ﻿namespace BotFrameworkStateManager.Core
 {
+    using BotFrameworkStateManager.Core.Memory;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
     public class BotStateManager : IBotStateManager
     {
+        public BotMemory MemoryModel { get; set; }
         public IBotState DefaultState { get; set; }
         public IBotState CurrentState { get; set; }
         public ICollection<IBotState> States { get; set; }
@@ -18,12 +20,6 @@
         public event EventHandler<IBotStateManagerEventArgs> OnExecutingQuery;
         public event EventHandler<IBotStateManagerEventArgs> OnExecutedQuery;
 
-        public BotStateManager(IBotState defaultState, ICollection<IBotState> botStates)
-        {
-            this.CurrentState = this.DefaultState = defaultState;
-            this.States = botStates;
-        }
-
         /// <summary>
         /// Query Luis, Request New Bot State.
         /// </summary>
@@ -31,6 +27,7 @@
         /// <returns></returns>
         public string QueryState(string query)
         {
+
             // Query Executing
             BotQueryStateChangedEventArgs executingQueryArgs = new BotQueryStateChangedEventArgs();
             executingQueryArgs.CurrentState = this.CurrentState;
@@ -45,23 +42,27 @@
 
             ICollection<IBotState> fulfilledStates = new List<IBotState>();
 
-            List<BotStateTransition> transitions = this.CurrentState.CanTransitionAnywhere ? this.States.SelectMany((state, nextState) => state.Transitions).Where(trans=>this.CurrentState.TransitionPriorities.Contains(trans.uuid.ToString())==false).ToList() : this.CurrentState.Transitions.ToList();
-            List<BotStateTransition> transitionsWithPriority = this.CurrentState.CanTransitionAnywhere ? this.States.SelectMany((state, nextState) => state.Transitions).Where(trans=>this.CurrentState.TransitionPriorities.Contains(trans.uuid.ToString())).ToList() : this.CurrentState.Transitions.ToList();
+            List<BotStateTransition> transitions = this.CurrentState.CanTransitionAnywhere ? this.States.SelectMany((state, nextState) => state.Transitions).Where(trans=>this.CurrentState.TransitionPriorities.Contains(trans.uuid.ToString())==false).ToList() : this.CurrentState.Transitions.Where(trans => this.CurrentState.TransitionPriorities.Contains(trans.uuid.ToString())==false).ToList();
+            List<BotStateTransition> transitionsWithPriority = this.CurrentState.CanTransitionAnywhere ? this.States.SelectMany((state, nextState) => state.Transitions).Where(trans=>this.CurrentState.TransitionPriorities.Contains(trans.uuid.ToString())).ToList() : this.CurrentState.Transitions.Where(trans => this.CurrentState.TransitionPriorities.Contains(trans.uuid.ToString())).ToList();
 
             // Priority items pushed to the bottom of stack.
-            transitionsWithPriority.Reverse();
 
-            transitions.InsertRange(transitions.Count, transitionsWithPriority);
+            transitions.InsertRange(0, transitionsWithPriority);
+
+            BotStateChangedEventArgs args = new BotStateChangedEventArgs();
+            args.CurrentState = this.CurrentState;
+            args.PreviousState = null;
+
+            args.EntityContext = luisResult.Entities.Select(e =>
+            {
+                return new KeyValuePair<string, string>(e.Type, e.Entity);
+            }).ToDictionary(d => d.Key, d => d.Value);
+
+            OnChangingState?.Invoke(null, args);
 
             // Run through transitions.
             foreach (BotStateTransition transition in transitions)
             {
-                BotStateChangedEventArgs args = new BotStateChangedEventArgs();
-                args.CurrentState = this.CurrentState;
-                args.PreviousState = null;
-                args.Transition = transition;
-
-                OnChangingState?.Invoke(null, args);
 
                 // Entities required for this transition
                 IEnumerable<string[]> reqdEntities = transition.RequiresEntities.Select(entity => new string[] { entity[0], entity[1] });
@@ -103,27 +104,31 @@
                     }) == false)
                         allRequirementsFulfilled = false;
                 }
-
+                
                 // If Intent set, must equal Luis Response. All required entities must be resolved.
-                if (allRequirementsFulfilled && (transition.Intent.Equals(luisResult.Intents.FirstOrDefault()?.Intent, StringComparison.CurrentCultureIgnoreCase) || transition.Intent == null))
+                if (allRequirementsFulfilled && (transition.Intent == null || transition.Intent.Equals(luisResult.Intents.FirstOrDefault()?.Intent, StringComparison.CurrentCultureIgnoreCase)))
                 {
-                    transition.TransitionTo.ContextMap = tmpDict;
+                    if (transition.TransitionTo != null)
+                        transition.TransitionTo.ContextMap = tmpDict;
+                    else
+                        this.CurrentState.ContextMap = tmpDict;
 
-                    fulfilledStates.Add(transition.TransitionTo);
+                    if (transition.TransitionTo != null)
+                        fulfilledStates.Add(transition.TransitionTo);
 
-                    bool highestRated = fulfilledStates.OrderBy(fulfillment => fulfillment.Context.Count)?.Last() == transition.TransitionTo;
+                    this.CurrentState.ActivatingState(args);
                     
-                    response = transition.TransitionTo.ResponseText;
+                    response = (transition.TransitionTo ?? this.CurrentState).ResponseText;
 
                     // Get Set Context Values
                     // Replace BotState.Response template with Context Vals
                     foreach (KeyValuePair<string, string> kvp in tmpDict)
                     {
-                        if (kvp.Key.IndexOf("*") != 0 && transition.TransitionTo.Context.Count > 0 && response.IndexOf(kvp.Key) >= 0)
+                        if (kvp.Key.IndexOf("*") != 0 && (transition.TransitionTo ?? this.CurrentState).Context.Count > 0 && response.IndexOf(kvp.Key) >= 0)
                         {
-                            response = response.Replace($"[{kvp.Key}]", $"{transition.TransitionTo.Context.First(d => d.Key.Equals(kvp.Value)).Key}", StringComparison.CurrentCultureIgnoreCase);
+                            response = response.Replace($"[{kvp.Key}]", $"{(transition.TransitionTo ?? this.CurrentState).Context.First(d => d.Key.Equals(kvp.Value)).Key}", StringComparison.CurrentCultureIgnoreCase);
 
-                            string valRep = transition.TransitionTo.Context.First(d => d.Key.Equals(kvp.Value)).Value;
+                            string valRep = (transition.TransitionTo ?? this.CurrentState).Context.First(d => d.Key.Equals(kvp.Value)).Value;
 
                             // If *, Get Luis Supplied Entity Value
                             if (valRep == "*" || string.IsNullOrEmpty(valRep) == true)
@@ -135,27 +140,44 @@
                         }
                     }
 
-                    if (transition.TransitionTo != null)
-                    {
-                        this.CurrentState = transition.TransitionTo;
+                    this.CurrentState = (transition.TransitionTo ?? this.CurrentState);
 
-                        // Bot State Changed Event
-                        BotStateChangedEventArgs stateChangeArgs = new BotStateChangedEventArgs();
-                        stateChangeArgs.CurrentState = this.CurrentState;
-                        stateChangeArgs.PreviousState = null;
-                        stateChangeArgs.Transition = transition;
+                    // Bot State Changed Event
+                    BotStateChangedEventArgs stateChangeArgs = new BotStateChangedEventArgs();
+                    stateChangeArgs.CurrentState = this.CurrentState;
+                    stateChangeArgs.PreviousState = null;
+                    stateChangeArgs.Transition = transition;
 
-                        OnChangedState?.Invoke(null, stateChangeArgs);
+                    OnChangedState?.Invoke(null, stateChangeArgs);
+                    this.CurrentState.ActivatedState(stateChangeArgs);
+                        
 
-                        Console.WriteLine($"Changed Bot State => {this.CurrentState.BotStateName}");
-                    }
-
+                    Console.WriteLine($"Changed Bot State => {this.CurrentState.BotStateName}");
+                    break;
                 }
 
             }
             
             if (string.IsNullOrEmpty(response))
-                response = "Sorry, I could not understand you!";
+            {
+                if(this.CurrentState.FallbackTransitionTo != null)
+                {
+                    this.CurrentState = this.CurrentState.FallbackTransitionTo;
+
+                    // Bot State Changed Event
+                    BotStateChangedEventArgs stateChangeArgs = new BotStateChangedEventArgs();
+                    stateChangeArgs.CurrentState = this.CurrentState;
+                    stateChangeArgs.PreviousState = null;
+                    stateChangeArgs.Transition = null;
+
+                    this.CurrentState.ActivatedState(stateChangeArgs);
+                    return this.CurrentState.ResponseText;
+                }
+                else
+                {
+                    return "Sorry, I could not understand your request";
+                }
+            }
             
 
             // Query Executed
@@ -168,5 +190,14 @@
 
             return response;
         }
+
+
+        public BotStateManager(IBotState defaultState, ICollection<IBotState> botStates)
+        {
+            this.MemoryModel = new BotMemory();
+            this.CurrentState = this.DefaultState = defaultState;
+            this.States = botStates;
+        }
+
     }
 }

@@ -6,13 +6,23 @@
   "culture": "en-us",
   "intents": [
     {
+      "name": "AboutMe"
+    },
+    {
       "name": "AskAboutItem"
+    },
+    {
+      "name": "MyName"
     },
     {
       "name": "None"
     }
   ],
   "entities": [
+    {
+      "name": "Name",
+      "roles": []
+    },
     {
       "name": "MyItems",
       "children": [
@@ -25,6 +35,468 @@
   ],
   "composites": [],
   "closedLists": [
+    {
+      "name": "Colors",
+      "subLists": [
+        {
+          "canonicalForm": "red",
+          "list": []
+        },
+        {
+          "canonicalForm": "blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "green",
+          "list": []
+        },
+        {
+          "canonicalForm": "yellow",
+          "list": []
+        },
+        {
+          "canonicalForm": "purple",
+          "list": []
+        },
+        {
+          "canonicalForm": "white",
+          "list": []
+        },
+        {
+          "canonicalForm": "orange",
+          "list": []
+        },
+        {
+          "canonicalForm": "black",
+          "list": []
+        },
+        {
+          "canonicalForm": "pink",
+          "list": []
+        },
+        {
+          "canonicalForm": "brown",
+          "list": []
+        },
+        {
+          "canonicalForm": "grey",
+          "list": []
+        },
+        {
+          "canonicalForm": "gray",
+          "list": []
+        },
+        {
+          "canonicalForm": "silver",
+          "list": []
+        },
+        {
+          "canonicalForm": "burgundy",
+          "list": []
+        },
+        {
+          "canonicalForm": "gold",
+          "list": []
+        },
+        {
+          "canonicalForm": "magenta",
+          "list": []
+        },
+        {
+          "canonicalForm": "navy",
+          "list": []
+        },
+        {
+          "canonicalForm": "turquoise",
+          "list": []
+        },
+        {
+          "canonicalForm": "beige",
+          "list": []
+        },
+        {
+          "canonicalForm": "violet",
+          "list": []
+        },
+        {
+          "canonicalForm": "teal",
+          "list": []
+        },
+        {
+          "canonicalForm": "pale",
+          "list": []
+        },
+        {
+          "canonicalForm": "fuchsia",
+          "list": []
+        },
+        {
+          "canonicalForm": "lavender",
+          "list": []
+        },
+        {
+          "canonicalForm": "lilac",
+          "list": []
+        },
+        {
+          "canonicalForm": "aqua",
+          "list": []
+        },
+        {
+          "canonicalForm": "maroon",
+          "list": []
+        },
+        {
+          "canonicalForm": "lime",
+          "list": []
+        },
+        {
+          "canonicalForm": "mauve",
+          "list": []
+        },
+        {
+          "canonicalForm": "ivory",
+          "list": []
+        },
+        {
+          "canonicalForm": "plum",
+          "list": []
+        },
+        {
+          "canonicalForm": "olive",
+          "list": []
+        },
+        {
+          "canonicalForm": "royal blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "tan",
+          "list": []
+        },
+        {
+          "canonicalForm": "khaki",
+          "list": []
+        },
+        {
+          "canonicalForm": "navy blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "dark green",
+          "list": []
+        },
+        {
+          "canonicalForm": "dark blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "hot pink",
+          "list": []
+        },
+        {
+          "canonicalForm": "light pink",
+          "list": []
+        },
+        {
+          "canonicalForm": "lime green",
+          "list": []
+        },
+        {
+          "canonicalForm": "forest green",
+          "list": []
+        },
+        {
+          "canonicalForm": "dark brown",
+          "list": []
+        },
+        {
+          "canonicalForm": "light green",
+          "list": []
+        },
+        {
+          "canonicalForm": "hunter green",
+          "list": []
+        },
+        {
+          "canonicalForm": "bronze",
+          "list": []
+        },
+        {
+          "canonicalForm": "kelly green",
+          "list": []
+        },
+        {
+          "canonicalForm": "sky blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "baby blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "olive green",
+          "list": []
+        },
+        {
+          "canonicalForm": "light brown",
+          "list": []
+        },
+        {
+          "canonicalForm": "chocolate brown",
+          "list": []
+        },
+        {
+          "canonicalForm": "dark red",
+          "list": []
+        },
+        {
+          "canonicalForm": "burnt orange",
+          "list": []
+        },
+        {
+          "canonicalForm": "emerald green",
+          "list": []
+        },
+        {
+          "canonicalForm": "dark purple",
+          "list": []
+        },
+        {
+          "canonicalForm": "dark pink",
+          "list": []
+        },
+        {
+          "canonicalForm": "copper",
+          "list": []
+        },
+        {
+          "canonicalForm": "bright red",
+          "list": []
+        },
+        {
+          "canonicalForm": "pale blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "baby pink",
+          "list": []
+        },
+        {
+          "canonicalForm": "fuschia",
+          "list": []
+        },
+        {
+          "canonicalForm": "light grey",
+          "list": []
+        },
+        {
+          "canonicalForm": "dark grey",
+          "list": []
+        },
+        {
+          "canonicalForm": "light yellow",
+          "list": []
+        },
+        {
+          "canonicalForm": "golden yellow",
+          "list": []
+        },
+        {
+          "canonicalForm": "light purple",
+          "list": []
+        },
+        {
+          "canonicalForm": "bright green",
+          "list": []
+        },
+        {
+          "canonicalForm": "deep red",
+          "list": []
+        },
+        {
+          "canonicalForm": "mint green",
+          "list": []
+        },
+        {
+          "canonicalForm": "emerald",
+          "list": []
+        },
+        {
+          "canonicalForm": "bright yellow",
+          "list": []
+        },
+        {
+          "canonicalForm": "bright pink",
+          "list": []
+        },
+        {
+          "canonicalForm": "cobalt blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "bright orange",
+          "list": []
+        },
+        {
+          "canonicalForm": "midnight blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "electric blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "deep purple",
+          "list": []
+        },
+        {
+          "canonicalForm": "deep blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "bright blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "pale pink",
+          "list": []
+        },
+        {
+          "canonicalForm": "pale yellow",
+          "list": []
+        },
+        {
+          "canonicalForm": "powder blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "crimson",
+          "list": []
+        },
+        {
+          "canonicalForm": "apple green",
+          "list": []
+        },
+        {
+          "canonicalForm": "lemon yellow",
+          "list": []
+        },
+        {
+          "canonicalForm": "indigo",
+          "list": []
+        },
+        {
+          "canonicalForm": "steel blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "ice blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "medium blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "gray blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "scarlet",
+          "list": []
+        },
+        {
+          "canonicalForm": "greenish blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "yellow green",
+          "list": []
+        },
+        {
+          "canonicalForm": "jet black",
+          "list": []
+        },
+        {
+          "canonicalForm": "silvery blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "purple blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "spring green",
+          "list": []
+        },
+        {
+          "canonicalForm": "pale green",
+          "list": []
+        },
+        {
+          "canonicalForm": "purple pink",
+          "list": []
+        },
+        {
+          "canonicalForm": "moss green",
+          "list": []
+        },
+        {
+          "canonicalForm": "light gray",
+          "list": []
+        },
+        {
+          "canonicalForm": "deep green",
+          "list": []
+        },
+        {
+          "canonicalForm": "sea green",
+          "list": []
+        },
+        {
+          "canonicalForm": "silver grey",
+          "list": []
+        },
+        {
+          "canonicalForm": "grass green",
+          "list": []
+        },
+        {
+          "canonicalForm": "rose pink",
+          "list": []
+        },
+        {
+          "canonicalForm": "ocean blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "bottle green",
+          "list": []
+        },
+        {
+          "canonicalForm": "leaf green",
+          "list": []
+        },
+        {
+          "canonicalForm": "sapphire blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "slate grey",
+          "list": []
+        },
+        {
+          "canonicalForm": "indigo blue",
+          "list": []
+        },
+        {
+          "canonicalForm": "ruby red",
+          "list": []
+        }
+      ],
+      "roles": []
+    },
     {
       "name": "Items",
       "subLists": [
@@ -92,6 +564,72 @@
         }
       ],
       "roles": []
+    },
+    {
+      "name": "UserContext",
+      "subLists": [
+        {
+          "canonicalForm": "I",
+          "list": []
+        },
+        {
+          "canonicalForm": "you",
+          "list": []
+        },
+        {
+          "canonicalForm": "he",
+          "list": []
+        },
+        {
+          "canonicalForm": "him",
+          "list": []
+        },
+        {
+          "canonicalForm": "they",
+          "list": []
+        },
+        {
+          "canonicalForm": "she",
+          "list": []
+        },
+        {
+          "canonicalForm": "it",
+          "list": []
+        },
+        {
+          "canonicalForm": "them",
+          "list": []
+        },
+        {
+          "canonicalForm": "this",
+          "list": []
+        },
+        {
+          "canonicalForm": "her",
+          "list": []
+        },
+        {
+          "canonicalForm": "us",
+          "list": []
+        },
+        {
+          "canonicalForm": "his",
+          "list": []
+        },
+        {
+          "canonicalForm": "that",
+          "list": []
+        },
+        {
+          "canonicalForm": "we",
+          "list": []
+        },
+        {
+          "canonicalForm": "our",
+          "list": []
+        }
+      ],
+      "roles": []
     }
   ],
   "patternAnyEntities": [],
@@ -99,6 +637,10 @@
   "prebuiltEntities": [
     {
       "name": "keyPhrase",
+      "roles": []
+    },
+    {
+      "name": "number",
       "roles": []
     }
   ],
@@ -114,12 +656,28 @@
       "intent": "AskAboutItem"
     },
     {
+      "pattern": "i am {number} years old",
+      "intent": "AboutMe"
+    },
+    {
       "pattern": "you {Ownership} a {MyItems::Item}",
       "intent": "AskAboutItem"
     },
     {
+      "pattern": "i am {number}",
+      "intent": "AboutMe"
+    },
+    {
+      "pattern": "my name is {Name}",
+      "intent": "MyName"
+    },
+    {
       "pattern": "you have any {MyItems::Item}",
       "intent": "AskAboutItem"
+    },
+    {
+      "pattern": "i am {Name}",
+      "intent": "MyName"
     },
     {
       "pattern": "do you have {MyItems::Item}",
@@ -135,6 +693,38 @@
     }
   ],
   "utterances": [
+    {
+      "text": "i am 10",
+      "intent": "AboutMe",
+      "entities": []
+    },
+    {
+      "text": "i am 10 years old",
+      "intent": "AboutMe",
+      "entities": []
+    },
+    {
+      "text": "my favorite color is red.",
+      "intent": "None",
+      "entities": [
+        {
+          "entity": "MyItems::Color",
+          "startPos": 12,
+          "endPos": 16
+        }
+      ]
+    },
+    {
+      "text": "my name is montray",
+      "intent": "MyName",
+      "entities": [
+        {
+          "entity": "Name",
+          "startPos": 11,
+          "endPos": 17
+        }
+      ]
+    },
     {
       "text": "what color is it",
       "intent": "AskAboutItem",

@@ -1,4 +1,4 @@
-﻿namespace BotFrameworkStateManager.Core
+﻿namespace BotFrameworkStateManager.Memory
 {
     using System;
     using System.Collections.Generic;
@@ -7,6 +7,9 @@
     public interface IBotMemoryDataModel
     {
         // TODO: Implement "memory" functionality . . . 
-        string ModelName { get; set; }
+
+        Guid uuid { get; set; }
+
+        string Data { get; set; }
     }
 }
