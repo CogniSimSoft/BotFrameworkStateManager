@@ -10,6 +10,14 @@
         public IBotState CurrentState { get; set; }
         public ICollection<IBotState> States { get; set; }
 
+        // Bot State Change Event Handlers.
+        public event EventHandler<IBotStateManagerEventArgs> OnChangingState;
+        public event EventHandler<IBotStateManagerEventArgs> OnChangedState;
+
+        // Luis Query Executing Event Handlers.
+        public event EventHandler<IBotStateManagerEventArgs> OnExecutingQuery;
+        public event EventHandler<IBotStateManagerEventArgs> OnExecutedQuery;
+
         public BotStateManager(IBotState defaultState, ICollection<IBotState> botStates)
         {
             this.CurrentState = this.DefaultState = defaultState;
@@ -17,12 +25,21 @@
         }
 
         /// <summary>
-        /// Query Luis, Request New Bot State
+        /// Query Luis, Request New Bot State.
         /// </summary>
         /// <param name="query">Luis Query</param>
         /// <returns></returns>
         public string QueryState(string query)
         {
+            // Query Executing
+            BotQueryStateChangedEventArgs executingQueryArgs = new BotQueryStateChangedEventArgs();
+            executingQueryArgs.CurrentState = this.CurrentState;
+            executingQueryArgs.PreviousState = null;
+            executingQueryArgs.Response = string.Empty;
+
+            OnExecutingQuery?.Invoke(null, executingQueryArgs);
+
+
             string response = null;
             Microsoft.Bot.Builder.Luis.Models.LuisResult luisResult = BotFrameworkStateManager.Core.Bot.Run(query);
 
@@ -39,6 +56,13 @@
             // Run through transitions.
             foreach (BotStateTransition transition in transitions)
             {
+                BotStateChangedEventArgs args = new BotStateChangedEventArgs();
+                args.CurrentState = this.CurrentState;
+                args.PreviousState = null;
+                args.Transition = transition;
+
+                OnChangingState?.Invoke(null, args);
+
                 // Entities required for this transition
                 IEnumerable<string[]> reqdEntities = transition.RequiresEntities.Select(entity => new string[] { entity[0], entity[1] });
 
@@ -114,6 +138,15 @@
                     if (transition.TransitionTo != null)
                     {
                         this.CurrentState = transition.TransitionTo;
+
+                        // Bot State Changed Event
+                        BotStateChangedEventArgs stateChangeArgs = new BotStateChangedEventArgs();
+                        stateChangeArgs.CurrentState = this.CurrentState;
+                        stateChangeArgs.PreviousState = null;
+                        stateChangeArgs.Transition = transition;
+
+                        OnChangedState?.Invoke(null, stateChangeArgs);
+
                         Console.WriteLine($"Changed Bot State => {this.CurrentState.BotStateName}");
                     }
 
@@ -123,6 +156,15 @@
             
             if (string.IsNullOrEmpty(response))
                 response = "Sorry, I could not understand you!";
+            
+
+            // Query Executed
+            BotQueryStateChangedEventArgs executedQueryArgs = new BotQueryStateChangedEventArgs();
+            executedQueryArgs.CurrentState = this.CurrentState;
+            executedQueryArgs.PreviousState = null;
+            executedQueryArgs.Response = response ;
+
+            OnExecutedQuery?.Invoke(null, executedQueryArgs);
 
             return response;
         }

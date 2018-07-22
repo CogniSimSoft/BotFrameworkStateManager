@@ -2,7 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
-
+    
     public class BotStateTransition
     {
         public Guid uuid { get; set; }
