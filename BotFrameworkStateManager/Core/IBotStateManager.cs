@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BotFrameworkStateManager.Core
+﻿namespace BotFrameworkStateManager.Core
 {
-    public interface IStateManager
+    using System.Collections.Generic;
+
+    public interface IBotStateManager
     {
         IBotState DefaultState { get; set; }
         IBotState CurrentState { get; set; }

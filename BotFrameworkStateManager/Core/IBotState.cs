@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace BotFrameworkStateManager.Core
+﻿namespace BotFrameworkStateManager.Core
 {
+    using System;
+    using System.Collections.Generic;
+
     public interface IBotState
     {
         string BotStateName { get; set; }
@@ -11,6 +11,7 @@ namespace BotFrameworkStateManager.Core
         Dictionary<string, string> ContextMap { get; set; }
         ICollection<IBotState> RelativeStates { get; set; }
         ICollection<BotStateTransition> Transitions { get; set; }
+        IList<string> TransitionPriorities { get; set; }
         bool CanTransitionAnywhere { get; set; }
         string ResponseText { get; set; }
         string PrimaryContext { get; set; }

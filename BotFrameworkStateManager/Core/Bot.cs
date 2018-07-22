@@ -1,21 +1,26 @@
-﻿using Microsoft.Bot.Builder.CognitiveServices.LuisActionBinding;
-using Microsoft.Bot.Builder.Luis;
-using Microsoft.Bot.Builder.Luis.Models;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace BotFrameworkStateManager.Core
+﻿namespace BotFrameworkStateManager.Core
 {
+    using Microsoft.Bot.Builder.CognitiveServices.LuisActionBinding;
+    using Microsoft.Bot.Builder.Luis;
+    using Microsoft.Bot.Builder.Luis.Models;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.Configuration;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+
     public static class Bot
     {
         public static IDictionary<string, string> Responses { get; set; }
 
+        /// <summary>
+        /// Luis Service Interaction.
+        /// </summary>
+        /// <param name="luisService">Luis Service.</param>
+        /// <param name="actions">Action Execution Contexts.</param>
+        /// <returns></returns>
         private static async Task<ActionExecutionContext> RunActions(ILuisService luisService, IList<ActionExecutionContext> actions)
         {
 
@@ -132,6 +137,11 @@ namespace BotFrameworkStateManager.Core
 
         }
 
+        /// <summary>
+        /// Query Luis API (Async).
+        /// </summary>
+        /// <param name="query">Luis Query.</param>
+        /// <returns></returns>
         internal static async Task<dynamic> RunQuery(string query)
         {
             // Process message
@@ -146,6 +156,11 @@ namespace BotFrameworkStateManager.Core
             return luisResult;
         }
 
+        /// <summary>
+        /// Query Luis API (Sync).
+        /// </summary>
+        /// <param name="query">Lus Query.</param>
+        /// <returns></returns>
         public static LuisResult Run(string query)
         {
             Task<dynamic> res = Task.Run(async () => {
