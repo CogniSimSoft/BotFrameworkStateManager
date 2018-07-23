@@ -1,12 +1,31 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Core\Memory\**" />
+    <EmbeddedResource Remove="Core\Memory\**" />
+    <None Remove="Core\Memory\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Core\BotQueryStateChangedEventArgs.cs" />
+    <Compile Remove="Core\BotState.cs" />
+    <Compile Remove="Core\BotStateChangedEventArgs.cs" />
+    <Compile Remove="Core\BotStateManager.cs" />
+    <Compile Remove="Core\BotStateTransition.cs" />
+    <Compile Remove="Core\IBotState.cs" />
+    <Compile Remove="Core\IBotStateManager.cs" />
+    <Compile Remove="Core\IBotStateManagerEventArgs.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Bot.Builder.Core" Version="4.0.1-preview" />
+    <PackageReference Include="Microsoft.Bot.Builder.Core.Extensions" Version="4.0.1-preview" />
     <PackageReference Include="Microsoft.Bot.Builder.CognitiveServices" Version="1.1.7" />
-    <PackageReference Include="Microsoft.Bot.Connector" Version="3.15.3" />
+    <!--<PackageReference Include="Microsoft.Bot.Connector" Version="3.15.3" />-->
     <PackageReference Include="Microsoft.Bot.Connector.DirectLine" Version="3.0.2" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
   </ItemGroup>

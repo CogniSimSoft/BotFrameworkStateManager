@@ -1,356 +1,164 @@
 ﻿namespace ItsMyStuff
 {
     using System;
-    using BotFrameworkStateManager.Core;
     using System.Collections.Generic;
-    using BotFrameworkStateManager.Core.Memory;
-    using BotFrameworkStateManager.Memory;
     using Newtonsoft.Json;
+    using BotFrameworkStateManager.Bot;
+    using Microsoft.Bot.Builder.Luis.Models;
+    using System.Linq;
+    using System.Threading.Tasks;
 
     class Program
     {
-        public void convoFlow()
-        {
-            IBotState defaultBotState = new BotState("defaultBotState");
-            IBotState confusedBotState = new BotState("confusedBotState")
-            {
-                ResponseText = "Hmmmm. I didn't understand that",
-                Transitions = new List<BotStateTransition>()
-                {
-                    new BotStateTransition()
-                    {
-                        //Intent = string.Empty,
-                        RequiresEntities = new List<string[]>(){
-                        },
-                        TransitionTo = defaultBotState
-                    },
-                },
-                CanTransitionAnywhere = false
-            };
-
-            //defaultBotState.FallbackTransitionTo = confusedBotState;
-            defaultBotState.ResponseText = string.Empty;
-            defaultBotState.Transitions = new List<BotStateTransition>()
-            {
-                new BotStateTransition()
-                {
-                    //Intent = string.Empty,
-                    RequiresEntities = new List<string[]>(){
-                        new string[]{"DetailContext", "builtin.keyPhrase" }
-                    },
-                    TransitionTo = defaultBotState
-                }
-            };
-            defaultBotState.CanTransitionAnywhere = false;
-
-
-            ICollection<IBotState> botStates = new List<IBotState>()
-            {
-                // Only Add Default Bot State If You Want ALL Failures To Reset Conversation
-                //botDefaultState,
-            };
-
-            IBotStateManager stateManager = new BotStateManager(defaultBotState, botStates);
-
-            defaultBotState.OnActivatingState += new EventHandler<IBotStateManagerEventArgs>((object sender, IBotStateManagerEventArgs e) =>
-            {
-                BotStateChangedEventArgs eventArgs = e as BotStateChangedEventArgs;
-
-                // Is Name Of User Known ?
-                if (stateManager.MemoryModel.Neurons.ContainsKey("User::Name") == false)
-                {
-                    if (eventArgs.EntityContext.ContainsKey("Name"))
-                    {
-                        IBotMemoryDataModel dataModel = new BotMemoryDataModel<string>();
-                        string name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(eventArgs.EntityContext["Name"]);
-
-                        dataModel.Data = JsonConvert.SerializeObject(name);
-
-                        eventArgs.EntityContext["Name"] = name;
-
-                        e.CurrentState.ResponseText = $"Thanks, {eventArgs.EntityContext["Name"]}! How old are you?";
-
-                        stateManager.MemoryModel.Neurons.Add("User::Name", dataModel);
-                    }
-                }
-                else if (stateManager.MemoryModel.Neurons.ContainsKey("User::Age") == false)
-                {
-                    if (eventArgs.EntityContext.ContainsKey("builtin.number"))
-                    {
-                        IBotMemoryDataModel dataModel = new BotMemoryDataModel<string>();
-                        int age = Convert.ToInt32(eventArgs.EntityContext["builtin.number"]);
-
-                        dataModel.Data = JsonConvert.SerializeObject(age);
-
-                        e.CurrentState.ResponseText = $"Cool! I am {age + 3} years old! What is your favorite color?";
-
-                        stateManager.MemoryModel.Neurons.Add("User::Age", dataModel);
-                    }
-                }
-
-
-                if (stateManager.MemoryModel.Neurons.ContainsKey("User::Name") && stateManager.MemoryModel.Neurons.ContainsKey("User::Age"))
-                {
-                    e.CurrentState.CanTransitionAnywhere = true;
-                }
-            });
-
-            confusedBotState.OnActivatedState += new EventHandler<IBotStateManagerEventArgs>((object sender, IBotStateManagerEventArgs e) =>
-            {
-
-            });
-
-
-            // Success => The size of my yorkie is small
-            string responseYorkieSize = stateManager.QueryState("My name is Montray.");
-            string responseYorkieSize2 = stateManager.QueryState("I like green");
-            string responseYorkieSize3 = stateManager.QueryState("I am 10.");
-        }
-
         static void Main(string[] args)
         {
+            IBotConversationTalkingPoint defaultTalkingPoint = new BotConversationTalkingPoint();
 
-            //convoFlow();
+            // Handle Conversation About An Item
+            IBotConversationTalkingPoint askAboutItemTalkingPoint = new BotConversationTalkingPoint();
 
-            IBotState botStateAdditionalInfo = new BotState("botStateAdditionalInfo");
+            // Handle Conversation About An Items' Details.
+            IBotConversationTalkingPoint askAboutItemDetailsTalkingPoint = new BotConversationTalkingPoint();
 
-            IBotState botStateConfused = new BotState("botStateConfused");
-
-
-
-            IBotState botStateMyItem = new BotState("botStateMyItem")
-
+            // Fallback
+            IBotConversationTalkingPoint fallBackTalkingPoint = new BotConversationTalkingPoint
             {
-
-                PrimaryContext = "ItemContext::item",
-
-                Context = new Dictionary<string, string>()
-
-                {
-
-                    {"item", "*"},
-
-                    {"color", "grey"},
-
-                    {"size", "small"}
-
-                },
-
-                Transitions = new List<BotStateTransition>()
-
-                {
-
-                    new BotStateTransition()
-
-                    {
-
-                        Intent = "AskAboutItem",
-
-                        RequiresEntities = new List<string[]>(){
-
-                            new string[]{"ItemPropertyContext", "MyItems::Color;MyItems::Size" }
-
-                        },
-
-                        TransitionTo = botStateAdditionalInfo
-
-                    },
-
-                },
-
-                CanTransitionAnywhere = false,
-
-                ResponseText = "The [ItemPropertyContext] of my [ItemContext::Value] is [ItemPropertyContext::Value]"
-
+                Text = "Sorry, I could not understand."
             };
 
-
-            var confusedTrans = new BotStateTransition()
-
+            // Bot Conversation Handle
+            IBotConversation botConversation = new BotConversation(defaultTalkingPoint, fallBackTalkingPoint)
             {
-
-                Intent = "AskAboutItem",
-
-                RequiresEntities = new List<string[]>(){
-
-                            new string[]{"ItemContext", "MyItems::Item"},
-
-                        },
-
-                TransitionTo = botStateConfused
-
-            };
-            
-
-            botStateAdditionalInfo.Context = new Dictionary<string, string>()
-
-                {
-
-                    {"color", "grey"},
-
-                    {"size", "small"}
-
-                };
-
-            botStateAdditionalInfo.CanTransitionAnywhere = false;
-
-            botStateAdditionalInfo.ResponseText = "It is [ItemPropertyContext::Value]";
-
-            botStateAdditionalInfo.Transitions = new List<BotStateTransition>()
-
-                {
-
-                    new BotStateTransition()
-
-                    {
-
-                        Intent = "AskAboutItem",
-
-                        RequiresEntities = new List<string[]>(){
-
-                            new string[]{"ItemPropertyContext", "MyItems::Color;MyItems::Size" }
-
-                        },
-
-                        TransitionTo = botStateAdditionalInfo
-
-                    },
-
-                    confusedTrans,
-
-                };
-
-            botStateAdditionalInfo.TransitionPriorities = new List<string>() { confusedTrans.uuid.ToString() };
-            
-            botStateConfused.Context = new Dictionary<string, string>()
-
-                {
-
-                    {"item", "*"}
-
-                };
-
-            botStateConfused.CanTransitionAnywhere = false;
-
-            botStateConfused.ResponseText = "I'm confused! What were we talking about?";
-
-            botStateConfused.Transitions = new List<BotStateTransition>()
-
-                {
-
-                    new BotStateTransition()
-
-                    {
-
-                        Intent = "AskAboutItem",
-
-                        RequiresEntities = new List<string[]>(){
-
-                            new string[]{"ItemContext", "MyItems::Item"},
-
-                            new string[]{"ItemPropertyContext", "MyItems::Color;MyItems::Size" }
-
-                        },
-
-                        TransitionTo = botStateMyItem
-
-                    },
-
-                };
-
-
-
-            IBotState defaultBotState = new BotState("defaultBotState")
-
-            {
-
-                ResponseText = "Welcome!",
-
-                Transitions = new List<BotStateTransition>()
-
-                {
-
-                    new BotStateTransition()
-
-                    {
-
-                        Intent = "AskAboutItem",
-
-                        RequiresEntities = new List<string[]>(){
-
-                            new string[]{"ItemContext", "MyItems::Item"},
-
-                            new string[]{"ItemPropertyContext", "MyItems::Color;MyItems::Size" }
-
-                        },
-
-                        TransitionTo = botStateMyItem
-
-                    },
-
-                },
-
-                CanTransitionAnywhere = true
-
+                TalkingPoints = new List<IBotConversationTalkingPoint>() {
+                    defaultTalkingPoint,
+                    askAboutItemTalkingPoint
+                }
             };
 
-
-
-            ICollection<IBotState> botStates = new List<IBotState>()
-
+            defaultTalkingPoint.Transitions = new List<IBotConversationTalkingPoint>()
             {
-
-                // Only Add Default Bot State If You Want ALL Failures To Reset Conversation
-
-                //botDefaultState,
-
-                botStateAdditionalInfo,
-
-                botStateConfused,
-
-                botStateMyItem
-
+                askAboutItemTalkingPoint
             };
+            defaultTalkingPoint.TransitionPriorities = new Dictionary<IBotConversationTalkingPoint, int>()
+            {
+                {askAboutItemTalkingPoint,1}
+            };
+            defaultTalkingPoint.ActivateOn = new Func<EchoState, IBotConversationTalkingPoint, LuisResult, (bool success, Action<object> callback)>((EchoState state, IBotConversationTalkingPoint contextTalkingPoint, LuisResult luisResult) => {
+
+                return (success: true, callback: null);
+            });
+
+            askAboutItemDetailsTalkingPoint.Transitions = new List<IBotConversationTalkingPoint>()
+            {
+                askAboutItemDetailsTalkingPoint
+            };
+            askAboutItemDetailsTalkingPoint.ActivateOn = new Func<EchoState, IBotConversationTalkingPoint, LuisResult, (bool success, Action<object> callback)>((EchoState state, IBotConversationTalkingPoint contextTalkingPoint, LuisResult luisResult) =>
+            {
+                var intentAskAboutItemSize = luisResult.Entities.FirstOrDefault(entity => entity.Type == "MyItems::Size");
+                var intentAskAboutItemColor = luisResult.Entities.FirstOrDefault(entity => entity.Type == "MyItems::Color");
+                var intentAskAboutItemObject = luisResult.Entities.FirstOrDefault(entity => entity.Type == "MyItems::Item" && entity.Entity != state.ItemContext);
+
+                if (intentAskAboutItemObject != null)
+                {
+                    if (intentAskAboutItemSize != null)
+                    {
+                        askAboutItemDetailsTalkingPoint.Text = $"I thought we were talking about the size of my '{state.ItemContext}' ? Ok, let's talk about my '{intentAskAboutItemObject.Entity}'!";
+                        
+                        return (true, ((object sender) =>
+                        {
+                            state.ItemContext = intentAskAboutItemObject.Entity;
+
+                        }));
+                    }
+                    else if (intentAskAboutItemColor != null)
+                    {
+                        askAboutItemDetailsTalkingPoint.Text = $"I thought we were talking about the color of my '{state.ItemContext}' ? Ok, let's talk about my '{intentAskAboutItemObject.Entity}'!";
+
+                        return (true, ((object sender) =>
+                        {
+                            state.ItemContext = intentAskAboutItemObject.Entity;
+
+                        }));
+                    }
+                    else
+                    {
+                        askAboutItemDetailsTalkingPoint.Text = $"Did you have a question about my '{state.ItemContext}'? (Size/Color)";
+                    }
+
+                    //return false;
+                }
+                else if (intentAskAboutItemSize != null)
+                {
+                    askAboutItemDetailsTalkingPoint.Text = $"The size of my {state.ItemContext} is small!";
+                }
+
+                else if (intentAskAboutItemColor != null)
+                {
+                    askAboutItemDetailsTalkingPoint.Text = $"The color of my {state.ItemContext} is red!";
+                }
+                return (success: true, callback: null);
+            });
+
+            askAboutItemTalkingPoint.Transitions = new List<IBotConversationTalkingPoint>()
+            {
+                askAboutItemDetailsTalkingPoint
+            };
+            askAboutItemTalkingPoint.ActivateOn = new Func<EchoState, IBotConversationTalkingPoint, LuisResult, (bool success, Action<object> callback)>((EchoState state, IBotConversationTalkingPoint contextTalkingPoint, LuisResult luisResult) => {
+                var intentAskAboutItem = luisResult.Intents.FirstOrDefault().Intent == "AskAboutItem";
+                var intentAskAboutItemSize = luisResult.Entities.FirstOrDefault(entity => entity.Type == "MyItems::Size");
+                var intentAskAboutItemColor = luisResult.Entities.FirstOrDefault(entity => entity.Type == "MyItems::Color");
+                var intentAskAboutItemObject = luisResult.Entities.FirstOrDefault(entity => entity.Type == "MyItems::Item");
+
+                if (intentAskAboutItem && intentAskAboutItemSize != null && intentAskAboutItemObject != null)
+                {
+                    state.ItemContext = intentAskAboutItemObject.Entity;
+
+                    askAboutItemTalkingPoint.Text = $"The size of my {state.ItemContext} is small!";
+                }
+
+                else if (intentAskAboutItem && intentAskAboutItemColor != null && intentAskAboutItemObject != null)
+                {
+                    state.ItemContext = intentAskAboutItemObject.Entity;
+
+                    askAboutItemTalkingPoint.Text = $"The color of my {state.ItemContext} is red!";
+                }
+
+                return (success: true, callback: null);
+            });
 
 
+            // Speak To Bot
+            // Context: Cat
+            // Response: The color of my cat is red!
+            Task botTask = botConversation.Say("What size is your cat?");
+            botTask.Wait();
 
-            IBotStateManager stateManager = new BotStateManager(defaultBotState, botStates);
+            // Context: Cat
+            // Response: The color of my cat is red!
+            Task botTask2 = botConversation.Say("What color is he?");
+            botTask2.Wait();
 
+            // Context: Cat => Dog
+            // Response: I thought we were talking about the color of my 'cat' ? Ok, let's talk about my 'dog'!
+            Task botTask3 = botConversation.Say("What color is your dog?");
+            botTask3.Wait();
 
+            // Context: Dog
+            // Response: The color of my dog is red!
+            Task botTask4 = botConversation.Say("What color is he?");
+            botTask4.Wait();
 
-            // Success => The size of my yorkie is small
+            // Context: Dog
+            // Response: The color of my dog is red
+            // Note: We are still aware that the context is about the dog's size
+            Task botTask5 = botConversation.Say("What about the dog?");
+            botTask5.Wait();
 
-            string responseYorkieSize = stateManager.QueryState("What size is your yorkie?");
+            // Context: Dog
+            // Response: I thought we were talking about the size of my 'dog' ? Ok, let's talk about my 'cat'!
+            Task botTask6 = botConversation.Say("What color is your cat?");
+            botTask6.Wait();
 
-
-
-            // Failure => Context is about yorkie details. Ask about the yorkies' size or color instead!
-
-            // Start Over
-
-            string responseCatColor = stateManager.QueryState("What color is your cat?");
-
-
-
-            // Failure => No new context has been set. Conversation was restarted.
-
-            string responseWhatColor = stateManager.QueryState("What color?");
-
-
-
-            // Success => The size of my dog is small.
-
-            string responseDogSize = stateManager.QueryState("What size is your dog?");
-
-
-
-            // Success => My dog is the color grey
-
-            string responseDogColor = stateManager.QueryState("What color is he?");
-
-
-
-            Console.WriteLine("Hello World!");
         }
     }
 }
