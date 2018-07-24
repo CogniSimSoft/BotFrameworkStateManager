@@ -1,15 +1,11 @@
 # BotFrameworkStateManager
 Create complex conversations driven by Cognitive Services and a custom conversational state manager.
 
-The BotFramework StateManager serves as a simple way to implement contextual conversations driven by LUIS using a custom state manager.
+The BotFramework StateManager serves as a simple way to implement contextual conversations driven by LUIS and Bot Framework4 using a custom state manager and adapter.
 
-## IBotState
+## BotState Transitioning
 
-The StateManager handles interface IBotState. An IBotState is a simple interface which allows you to configure and handle activities within a state.
-
-## BotStateTransition
-
-A real conversation cannot happen without knowing what to respond to someone. BotStateTransition is a class which holds information pertaining to what the bot should respond to, and how it should respond to it.
+A real conversation cannot happen without knowing what to respond to someone. IBotConversationTalkingPoint is an interface which holds information pertaining to what the bot should respond to, and how it should respond to it.
 
 
 -----------
@@ -20,54 +16,46 @@ Ask the bot a question about a personal belonging such as 'What color is your ha
 
 `... setup bot states, bot transitions, etc ...`
 
-`// Success => The size of my yorkie is small`
+            // Context: Cat
+            // Response: The color of my cat is red!
+            Task botTask = botConversation.Say("What size is your cat?");
+            botTask.Wait();
 
-`string responseYorkieSize = stateManager.QueryState("What size is your yorkie?");`
+            // Context: Cat
+            // Response: The color of my cat is red!
+            Task botTask2 = botConversation.Say("What color is he?");
+            botTask2.Wait();
 
-User is asking about the size of the bot's Yorkie and responds 'The size of my yorkie is small'.
+            // Context: Cat => Dog
+            // Response: I thought we were talking about the color of my 'cat' ? Ok, let's talk about my 'dog'!
+            Task botTask3 = botConversation.Say("What color is your dog?");
+            botTask3.Wait();
 
------------
+            // Context: Dog
+            // Response: The color of my dog is red!
+            Task botTask4 = botConversation.Say("What color is he?");
+            botTask4.Wait();
 
-`// Failure => Context is about yorkie details. Ask about the yorkies' size or color instead!`
+            // Context: Dog
+            // Response: The color of my dog is red
+            // Note: We are still aware that the context is about the dog's size
+            Task botTask5 = botConversation.Say("What about the dog?");
+            botTask5.Wait();
 
-`// Start Over`
-
-`string responseCatColor = stateManager.QueryState("What color is your cat?");`
-
-User is now asking the bot about the color of it's cat. However, the context of the conversation is around the 'Yorkie'. Bot responds with 'I'm confused! What were we talking about?' or a custom message. The conversation is restarted.
-
------------
-
-`// Failure => No new context has been set. Conversation was restarted.`
-
-`string responseWhatColor = stateManager.QueryState("What color?");`
-
-User is now asking what color. However, the bot is confused and no longer knows that we are talking about the Yorkie because the conversation context was changed randomly. Ask a question about the dog or some other belonging!
-
------------
-
-`// Success => The size of my dog is small.`
-
-`string responseDogSize = stateManager.QueryState("What size is your dog?");`
-
-User now asks question about the size of the dog and responds with 'The size of my dog is small'.
-
------------
-
-`// Success => My dog is the color grey`
-
-`string responseHisColor = stateManager.QueryState("What color is he?");`
-
-User now asks what color he is and bot responds with 'It is grey'.
+            // Context: Dog
+            // Response: I thought we were talking about the size of my 'dog' ? Ok, let's talk about my 'cat'!
+            Task botTask6 = botConversation.Say("What color is your cat?");
+            botTask6.Wait();
 
 -----------
 
-# Dependencies
+# Dependencies : BotFramework v4
 
 * Microsoft.Bot.Builder.CognitiveServices
 
 * Microsoft.Bot.Connector
 
 * Microsoft.Bot.Connector.DirectLine
+
 
 Documentation coming soon! :)
