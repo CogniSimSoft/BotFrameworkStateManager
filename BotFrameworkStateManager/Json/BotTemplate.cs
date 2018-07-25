@@ -68,12 +68,6 @@ namespace BotFrameworkStateManager.Core
 
             IBotConversation botConversation = new BotConversation(defaultTalkingPoint, fallbackTalkingPoint);
 
-
-            botConversation.Say("Thank you for contacting [Company]. My name is Montray. How can I help you ?");
-            botConversation.Say("Thank you for contacting [Company]. My name is Montray. How can I help you ?");
-            botConversation.Say("Thank you for contacting [Company]. My name is Montray. How can I help you ?");
-            botConversation.Say("Thank you for contacting [Company]. My name is Montray. How can I help you ?");
-
             return botConversation;
         }
 
