@@ -11,10 +11,14 @@ namespace BotFrameworkStateManager.Bot
     public interface IBotConversationTalkingPoint
     {
         Guid uuid { get; set; }
+
+        string Name { get; set; }
+        string Text { get; set; }
+
         ICollection<IBotConversationTalkingPoint> Transitions { get; set; }
         IDictionary<IBotConversationTalkingPoint, int> TransitionPriorities { get; set; }
 
-        string Text { get; set; }
+
         Func<EchoState, IBotConversationTalkingPoint, LuisResult, (bool success, Action<object> callback)> ActivateOn { get; set; }
 
         bool SetPriority(IBotConversationTalkingPoint talkingPoint, uint priority);
