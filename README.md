@@ -3,6 +3,10 @@ Create complex conversations driven by Cognitive Services and a custom conversat
 
 The BotFramework StateManager serves as a simple way to implement contextual conversations driven by LUIS and Bot Framework4 using a custom state manager and adapter.
 
+# JSON Templated Bots (Code-less bot creation)
+
+In this framework includes a JSON bot template which allows you to create complex conversations using just JSON to drive the actual conversation.
+
 ## BotState Transitioning
 
 A real conversation cannot happen without knowing what to respond to someone. IBotConversationTalkingPoint is an interface which holds information pertaining to what the bot should respond to, and how it should respond to it.
