@@ -7,7 +7,7 @@ The BotFramework StateManager serves as a simple way to implement contextual con
 Check out the [wiki](https://github.com/CogniSimSoft/BotFrameworkStateManager/wiki
 ) for documentation.
 
-# JSON Templated Bots (Code-less bot creation)
+## JSON Templated Bots (Code-less bot creation)
 
 In this framework includes [JSON bot template](https://github.com/CogniSimSoft/BotFrameworkStateManager/wiki/BotTemplate) which allows you to create complex conversations using just JSON to drive the actual conversation.
 
