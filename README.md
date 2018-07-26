@@ -1,11 +1,15 @@
 # BotFrameworkStateManager
 Create complex conversations driven by Cognitive Services and a custom conversational state manager.
 
+
 The BotFramework StateManager serves as a simple way to implement contextual conversations driven by LUIS and Bot Framework4 using a custom state manager and adapter.
+
+Check out the [wiki](https://github.com/CogniSimSoft/BotFrameworkStateManager/wiki
+) for documentation.
 
 # JSON Templated Bots (Code-less bot creation)
 
-In this framework includes a JSON bot template which allows you to create complex conversations using just JSON to drive the actual conversation.
+In this framework includes [JSON bot template](https://github.com/CogniSimSoft/BotFrameworkStateManager/wiki/BotTemplate) which allows you to create complex conversations using just JSON to drive the actual conversation.
 
 ## BotState Transitioning
 
@@ -61,5 +65,3 @@ Ask the bot a question about a personal belonging such as 'What color is your ha
 
 * Microsoft.Bot.Connector.DirectLine
 
-
-Documentation coming soon! :)
